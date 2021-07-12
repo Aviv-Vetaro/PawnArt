@@ -1,0 +1,26 @@
+﻿@page "/MatchMake/{Secs:int}"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject MatchMakingService MatchMakingService
+
+<h3>MatchMaking...</h3>
+
+@code {
+    [Parameter]
+    public int Secs
+    {
+        get; set;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Guid gameId = await MatchMakingService.FindMatchAsync(Secs);
+        NavigationManager.NavigateTo($"/Play/{gameId}/{Secs}");
+    }
+
+}
+
+
+

@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager Navigation
+
+
+
+@page "/"
+
+<h1>PawnArt</h1>
+<AuthorizeView>
+    <Authorized>
+        <div>Minuts:</div>
+        <input type="number" id="TimeControlMinuts" @bind="inputMinuts"/>
+        <div>Seconds:</div>
+        <input type="number" id="TimeControlSeconds" @bind="inputSeconds"/>
+        <button class="nav-link btn btn-link" @onclick="PlayHumanRedirect">Play Human</button>
+
+        <button class="nav-link btn btn-link" @onclick="PlayHumanRedirect">Play Computer</button>
+        <h1>Test</h1>
+    </Authorized>
+    <NotAuthorized></NotAuthorized>
+</AuthorizeView>
+
+
+
+
+@code{
+    private string inputSeconds = "0";
+    private string inputMinuts = "10";
+    private void PlayHumanRedirect(MouseEventArgs args)
+    {
+        int mins = int.Parse(inputMinuts);
+        int secs = int.Parse(inputSeconds);
+        Navigation.NavigateTo($"MatchMake/{secs + mins * 60}");
+       
+
+    }
+}
+@code{
+    private void PlayComputer(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("Play");
+    }
+}
+
+

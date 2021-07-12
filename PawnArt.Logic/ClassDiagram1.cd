@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PawnArt.Logic.Player" Collapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAAAAAgAAAAAAAAAAAAIAAAQAAAAAAAiA=</HashCode>
+      <FileName>Player.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PawnArt.Logic.Game" Collapsed="true">
+    <Position X="10.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAIAEAEAAAhACAAAAAAAAAAAAAAAEBAEAACASAAA=</HashCode>
+      <FileName>Game.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PawnArt.Logic.BoardArrangment.Board" Collapsed="true">
+    <Position X="5.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAIAAAABABAAAAAAACAAAAAAAABAEAAAIQAAA=</HashCode>
+      <FileName>BoardArrangment\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="PawnArt.Logic.IRepository&lt;T&gt;" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAABAAAAAAAAAAQAAA=</HashCode>
+      <FileName>IRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PawnArt.Logic.IPlayerRepository" Collapsed="true">
+    <Position X="9.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IPlayerRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PawnArt.Logic.DataAccessInterface.IGameRepository" Collapsed="true">
+    <Position X="7.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="PawnArt.Logic.BoardArrangment.PieceType" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAEggAAAAEAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BoardArrangment\PieceType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="PawnArt.Logic.BoardArrangment.PieceColor" Collapsed="true">
+    <Position X="12.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BoardArrangment\PieceColor.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

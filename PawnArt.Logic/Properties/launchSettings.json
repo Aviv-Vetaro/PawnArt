@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PawnArt.Logic": {
+      "commandName": "Project"
+    },
+    "PawnArt.Client": {
+      "commandName": "Project"
+    }
+  }
+}

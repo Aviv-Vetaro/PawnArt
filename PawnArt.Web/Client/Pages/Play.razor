@@ -1,0 +1,198 @@
+﻿@page "/Play/{gameId}/{secs}"
+@inject GameService GameService
+<style>
+    .chess-board {
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+        th {
+            padding: .5em;
+        }
+
+       td {
+            border: 1px solid;
+            width: 5em;
+            height: 6em;
+        }
+
+        .light {
+            background: #eee;
+        }
+
+       .dark {
+            background: #000;
+        }
+
+        .highlighted {
+            background: #42f2f5
+        }
+        
+</style>
+<table>
+    <tbody>
+
+        @foreach(var row in Board)
+        {
+            <tr>
+               <th>@row.Key</th>
+                @foreach(var cell in row)
+                {
+                    <td class=@GetColor(cell) @onclick="() => PieceSelectedHandler(cell)">
+                        @if(cell.Piece is not null)
+                        {
+                            @pieceSymbols[cell.Piece]
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+    <h1>You are playing as: @colorOfPlayer</h1>
+</table>
+@if(showModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Select one:</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p>This is the modal content!</p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn" @onclick="()=>PromotionPieceSelectedAsync(PieceTypeDto.Queen)">@pieceSymbols[new PieceDto(PieceTypeDto.Queen, currentState.Color)]</button>
+                    <button type="button" class="btn" @onclick="()=>PromotionPieceSelectedAsync(PieceTypeDto.Rook)">@pieceSymbols[new PieceDto(PieceTypeDto.Rook, currentState.Color)]</button>
+                    <button type="button" class="btn" @onclick="()=>PromotionPieceSelectedAsync(PieceTypeDto.Bishop)">@pieceSymbols[new PieceDto(PieceTypeDto.Bishop, currentState.Color)]</button>
+                    <button type="button" class="btn" @onclick="()=>PromotionPieceSelectedAsync(PieceTypeDto.Knight)">@pieceSymbols[new PieceDto(PieceTypeDto.Knight, currentState.Color)]</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public string gameId
+    {
+        get; set;
+    } = null!;
+    [Parameter]
+    public string secs
+    {
+        get; set;
+    } = null!;
+    private string colorOfPlayer = "";
+    private bool showModal = false;
+    private readonly List<SquareDto> squares = new List<SquareDto>();
+    private IEnumerable<IGrouping<int, SquareDto>> Board => squares.GroupBy(s => s.Index.Row);
+    private readonly List<MoveDto> moves = new List<MoveDto>();
+    private GameStateDto currentState;
+    private SquareDto? squareSelected = null;
+    private readonly List<MoveDto> possiblePromotions = new List<MoveDto>();
+    private readonly IDictionary<PieceDto, char> pieceSymbols = new Dictionary<PieceDto, char>
+{
+        {new PieceDto(PieceTypeDto.Pawn, PieceColorDto.White), '♙'},
+        {new PieceDto(PieceTypeDto.Pawn, PieceColorDto.Black), '♟'},
+
+        {new PieceDto(PieceTypeDto.Knight, PieceColorDto.White), '♘'},
+        {new PieceDto(PieceTypeDto.Knight, PieceColorDto.Black), '♞'},
+
+        {new PieceDto(PieceTypeDto.Bishop, PieceColorDto.White), '♗'},
+        {new PieceDto(PieceTypeDto.Bishop, PieceColorDto.Black), '♝'},
+
+        {new PieceDto(PieceTypeDto.Rook, PieceColorDto.White), '♖'},
+        {new PieceDto(PieceTypeDto.Rook, PieceColorDto.Black), '♜'},
+
+        {new PieceDto(PieceTypeDto.Queen, PieceColorDto.White), '♕'},
+        {new PieceDto(PieceTypeDto.Queen, PieceColorDto.Black), '♛'},
+
+        {new PieceDto(PieceTypeDto.King, PieceColorDto.White), '♔'},
+        {new PieceDto(PieceTypeDto.King, PieceColorDto.Black), '♚'}
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        GameService.OnOpponentMadePly += BoardChanged;
+        await GameService.ConnectAsync(gameId);
+    }
+    private void BoardChanged(GameStateDto newGameState)
+    {
+        colorOfPlayer = newGameState.Color == PieceColorDto.White ? "White" : "Black";
+        possiblePromotions.Clear();
+        ModalCancel();
+        currentState = newGameState;
+        squares.Clear();
+        squares.AddRange(currentState.Squares);
+        moves.Clear();
+        moves.AddRange(currentState.PossibleMoves);
+        StateHasChanged();
+    }
+
+    public async Task PieceSelectedHandler(SquareDto squre)
+    {
+        possiblePromotions.Clear();
+        ModalCancel();
+        if(squareSelected is not null)
+        {
+            List<MoveDto> inferredMoves = moves.
+               Where(move => move.from.Equals(squareSelected)).
+               Where(move => move.to.Equals(squre)).
+               ToList();
+            if(!inferredMoves.Any())
+            {
+                squareSelected = squre;
+            }
+
+            else if(inferredMoves.Count is 1)
+            {
+                MoveDto moveMade = inferredMoves.Single();
+                await GameService.PlayMoveAsync(moveMade, gameId);
+                squareSelected = null;
+            }
+            else
+            {
+                possiblePromotions.AddRange(inferredMoves);
+                squareSelected = null;
+                ModalShow();
+            }
+        }
+        else
+        {
+            squareSelected = squre;
+        }
+        StateHasChanged();
+    }
+    private string GetColor(SquareDto square)
+    {
+
+        int parityForWhiteSquares = currentState.Color is PieceColorDto.White ? 0 : 1;
+        if(square.Index.Row * square.Index.Col % 2 == parityForWhiteSquares)
+            return "light";
+        return "dark";
+    }
+    public async Task PromotionPieceSelectedAsync(PieceTypeDto pieceTypeSelected)
+    {
+        ModalCancel();
+        if(!possiblePromotions.Any())
+            return;
+        MoveDto moveMade = possiblePromotions.Where(x => x.promotionType == pieceTypeSelected).Single();
+        await GameService.PlayMoveAsync(moveMade, gameId);
+
+    }
+    void ModalShow() => showModal = true;
+    void ModalCancel() => showModal = false;
+    void ModalOk()
+    {
+        showModal = false;
+    }
+}
+
